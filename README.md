@@ -1,3 +1,5 @@
+<img width="1920" height="1035" alt="HOVA" src="https://github.com/user-attachments/assets/75a87415-c3d9-4c18-bcd2-3031036c1f7f" />
+https://github.com/user-attachments/assets/2e60c4a9-2eaf-4800-a794-9d0f289f58ca
 # DSH-AEGIS
 
 A physical password manager. ESP32-S3, a tiny OLED, six buttons, and an SD card.
