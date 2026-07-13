@@ -10,7 +10,7 @@ created_at: "2026-06-24"
 > board yet — PCBs cost money and I'm funding this myself. So nothing here has
 > been flashed or tested on real hardware. It's all verified in KiCad, not on a
 > bench.
-
+(holy im so fucking done, so i was adding the lapse links, and my laptop just SHUT OFF, it didnt run out of power,i didnt close it, IT JS TURNED OFF, and i lost all my progress, NTS: READD LAPSE LINKS)
 ---
 
 # June 24th: Starting the schematic, meeting a chip with too many pins
