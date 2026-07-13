@@ -25,7 +25,7 @@ Then I did the six buttons. RECORD, SAVE, PLAY, SCROLL LEFT, SELECT, SCROLL RIGH
 
 The wires got messy but KiCad only cares that the connections are right, not that it looks nice.
 
-Lapse: [LAPSE LINK]
+Lapse: [yo MURDER my laptop]
 
 **Total time spent: 5h**
 
@@ -51,7 +51,7 @@ Then footprints, which nobody warns you about. A schematic symbol is basically a
 
 I have now seen every connector ever manufactured.
 
-Lapse: [LAPSE LINK]
+Lapse: ["yeah add a lapse section, it'll be such a good idea!"]
 
 **Total time spent: 6h**
 
@@ -73,7 +73,7 @@ Ended at 217 track segments, 21 vias, 43 nets, 0 unrouted. That last number is t
 
 Did not move from this chair all day.
 
-Lapse: [LAPSE LINK]
+Lapse: [waaaaaaaaaaaaaaaaah]
 
 **Total time spent: 8h**
 
@@ -95,7 +95,7 @@ Then opened the 3D viewer to see what it'd look like when it's real, and honestl
 
 ![](assets/Screenshot_from_2026-06-25_03-43-38.png)
 
-Lapse: [LAPSE LINK]
+Lapse: [TIMWANMNIHAC]
 
 **Total time spent: 4h**
 
@@ -115,7 +115,7 @@ Then I laid everything out flat to check it'd actually print, and mostly to chec
 
 Not printing it yet though. Every dimension in here is a guess off the KiCad model and I'd rather measure the real board with calipers than waste filament. So it stays a model.
 
-Lapse: [LAPSE LINK]
+Lapse: [payed the toll on a broken road]
 
 **Total time spent: 5h**
 
@@ -137,7 +137,7 @@ The weak point is adding entries. Six buttons can't type a password, so RECORD h
 
 None of this has run on real hardware. It compiles and I've read through it a bunch of times but until I can afford the PCB it's all theoretical. I fully expect to find stuff wrong the second it actually boots.
 
-Lapse: [LAPSE LINK]
+Lapse: [i hate ts laptop dawg]
 
 **Total time spent: 6h**
 
