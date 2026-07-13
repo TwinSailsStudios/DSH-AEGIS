@@ -1,141 +1,113 @@
 # DSH-AEGIS
 
-A password manager you can hold. It's a little ESP32 board with a screen and six
-buttons, and it plugs into your computer over USB-C. When you press PLAY, it
-types your password for you, because to the computer it just looks like a normal
-keyboard.
+A physical password manager. ESP32-S3, a tiny OLED, six buttons, and an SD card.
+Plugs into your computer over USB-C and *types* your passwords for you.
 
-Your passwords live encrypted on a microSD card. They never get sent anywhere.
-The only thing that ever leaves the device is keystrokes.
+> **Status: designed, not built.** The schematic and PCB are done, the firmware
+> is written. I haven't ordered the board yet because I'm paying for this stuff
+> myself and PCBs cost money. Everything here is verified in KiCad, not on a
+> bench. I'll update this when I can afford to fab it.
 
-I built this because I kept reusing the same password everywhere, which is bad,
-and password manager apps felt like a lot of trust to put in a company. This way
-the passwords are on a card in my pocket.
+## why
 
-## What it does
+I was using the same password on like nine different sites. Which is bad. Every
+password manager I looked at wanted me to trust a company with all of it, and I
+didn't love that either. So: keep them on an SD card, in my pocket, encrypted.
 
-* Locks behind a 4-digit PIN
-* Stores your logins encrypted with AES-256
-* Types the password straight into the login box (USB HID keyboard)
-* Can also type username, then Tab, then password, so it fills the whole form
-* Generates strong random passwords for you
-* Shows the password on screen if you actually need to read it
-* Auto-locks after 60 seconds if you walk away
-* Has a UI I spent way too long on (smooth sliding, page dots, little pop-up
-  messages, the whole iOS thing)
+## what it does
 
-## Hardware
+- Locks behind a PIN you enter on the buttons
+- Vault is encrypted on the SD card with AES-256
+- Types the password straight into the login box over USB
+- Can do username → Tab → password to fill a whole form
+- Generates strong random passwords
+- Auto-locks after 60s if you walk away
 
-| Part | What it is |
+The typing thing is the whole point. The ESP32-S3 has **native USB**, so the board
+doesn't *pretend* to be a keyboard — your computer genuinely thinks a keyboard got
+plugged in. No drivers, no app. Works on any machine you walk up to.
+
+## hardware
+
+| part | what it does |
 |---|---|
-| ESP32-S3-WROOM-1 | the brain, and it does USB natively |
-| SSD1306 OLED 128x32 | the screen (I2C) |
-| 6x tactile push buttons | the controls |
-| microSD card module | where the vault lives (SPI) |
+| ESP32-S3-WROOM-1 | the brain. picked for native USB |
+| SSD1306 128x32 OLED | the screen (I2C) |
+| 6x tactile switches | the controls |
+| microSD module | where the vault lives (SPI) |
 | USB-C receptacle | power + keyboard |
-| AMS1117-3.3 | drops 5V to 3.3V |
+| AMS1117-3.3 | 5V → 3.3V |
+| 2x 5.1K resistors | CC pins, so USB-C actually gives you power |
 
-**Important:** this board uses IO35, IO36 and IO37 for the SD card. Those pins
-are only free if your ESP32-S3 module has no PSRAM or quad PSRAM. If you get an
-**R8** module (octal PSRAM), those pins belong to the PSRAM chip and the SD card
-will not work. Check the part number before you order.
+## pinout
 
-## Pinout
-
-| Pin | Goes to |
+| pin | goes to |
 |---|---|
-| IO0 | RECORD button |
-| IO1 | SAVE button |
-| IO2 | PLAY button |
-| IO3 | SCROLL LEFT button |
-| IO4 | SELECT button |
-| IO5 | SCROLL RIGHT button |
-| IO6 | OLED SCL |
-| IO7 | OLED SDA |
-| IO35 | SD CS |
-| IO36 | SD MOSI |
-| IO37 | SD SCK |
-| IO38 | SD MISO |
+| IO0–IO5 | RECORD, SAVE, PLAY, SCROLL-L, SELECT, SCROLL-R |
+| IO6 / IO7 | OLED SCL / SDA |
+| IO35–IO38 | SD CS / MOSI / SCK / MISO |
 
-## Setting it up
+**Heads up on IO35–37.** On an ESP32-S3 module with **octal (R8) PSRAM**, those
+three pins are wired to the PSRAM die internally and you can't use them as GPIO.
+This board only works with a **no-PSRAM or quad-PSRAM** module. If you build it,
+check the part number, and set **PSRAM: Disabled** in the Arduino IDE — leave it
+on OPI and the chip claims those pins at boot, before your code runs, and the SD
+card silently never mounts.
 
-1. Install the **U8g2** library in the Arduino IDE. Everything else already comes
-   with the ESP32 board package.
-2. Board settings:
-   * Board: **ESP32S3 Dev Module**
-   * USB CDC On Boot: **Enabled**
-   * USB Mode: **USB-OTG (TinyUSB)**
-   * PSRAM: **Disabled**
+## how you'd use it
 
-   That last one matters. If you leave PSRAM on OPI, the chip takes IO35-37 for
-   itself and the SD card just quietly won't work, which took me a while to
-   figure out.
-3. Put a FAT32 formatted microSD card in.
-4. Flash `dsh_aegis.ino`.
+Enter your PIN. Scroll to the login you want with the arrow buttons. Click into
+whatever password box you're filling out on your computer. Hit **PLAY**. Done.
 
-## Using it
+**SELECT** opens a menu with more options: type just the password, type
+username+Tab+password, show the password on screen, or delete it.
 
-**First time.** It'll ask you to make a PIN. Use SCROLL LEFT and SCROLL RIGHT to
-change the digit, SELECT to move to the next one. It asks twice so you don't lock
-yourself out with a typo. Then it makes an empty vault on the card.
+Adding a new entry is the weak spot right now — you press **RECORD** and it hands
+off to the serial monitor, where you send `label⇥username⇥password`. A password
+manager that needs a computer to set up is a bit embarrassing and I want to fix
+it. (Put `*` as the password and it generates one for you.)
 
-**After that.** Type your PIN in the same way. If it's wrong the screen shakes at
-you and you start over.
+Then hit **SAVE** to encrypt it and write it to the card.
 
-**Adding a password.** There's no keyboard on the device, so pressing RECORD hands
-it off to the serial monitor. Open it at 115200 and send one line like this, with
-actual Tab characters between the parts:
+## the crypto
 
-```
-GitHub    pratik@example.com    hunter2
-```
+Boring on purpose. Your PIN goes through PBKDF2-HMAC-SHA256 (60,000 rounds, random
+salt) to turn 4 digits into a real key. Vault is AES-256-CBC. There's an HMAC over
+the ciphertext, so a wrong PIN fails the check and the device never even attempts
+to decrypt. Salt and IV are fresh every save.
 
-If you'd rather have the device make up a password for you, put `*` instead of
-the password and it'll generate a 20 character one. `gen:32` gives you 32
-characters.
+I did not invent any of this. Inventing your own crypto is how you become a
+cautionary example in someone's blog post.
 
-That entry is only *staged* at this point. Press **SAVE** on the device to
-actually encrypt it and write it to the card. There's a little dot in the corner
-of the screen reminding you when you have unsaved stuff.
+## build it yourself
 
-**Getting a password out.** Scroll to the one you want with the left and right
-buttons, click into whatever login box you're filling out, and press **PLAY**. It
-types it.
+Firmware is in `firmware/`. You need the **U8g2** library; everything else ships
+with the ESP32 Arduino core.
 
-If you want the other options, press **SELECT** instead and you get a menu: type
-the password, type username + Tab + password, show the password on screen, delete
-it, or go back.
+Board settings:
+- Board: ESP32S3 Dev Module
+- USB CDC On Boot: **Enabled**
+- USB Mode: **USB-OTG (TinyUSB)**
+- PSRAM: **Disabled** (see the IO35 warning above)
 
-## How the encryption works
+KiCad project is in `hardware/`.
 
-I'm not a cryptographer so I stuck to the boring standard stuff, which is what
-you're supposed to do anyway.
+## what's not done
 
-Your PIN goes through PBKDF2-HMAC-SHA256 with 60,000 rounds and a random salt.
-That turns 4 digits into a real key, and the 60,000 rounds make guessing slow.
-The vault gets encrypted with AES-256-CBC. There's also an HMAC over the
-ciphertext, so if you enter the wrong PIN, or if somebody messed with the file,
-it fails the check and the device never even tries to decrypt anything.
+- **Never physically built.** Simulated and verified in KiCad only.
+- A 4-digit PIN is 10,000 combinations. The PBKDF2 rounds slow an attacker down a
+  lot but it's not amazing if someone steals the card and is patient.
+- No lockout after repeated wrong guesses.
+- Can't add entries on the device, needs serial.
+- No way to change your PIN without wiping everything.
+- Case is modelled in Tinkercad but not printed.
 
-The salt and the IV are new every single time you save.
+## AI use
+I used gemini to help with some kicad features and trying to debug a probelm with exporting my 3d model of my pcb
+I used Claude to help write the firmware and to talk through design decisions
+(pin conflicts, how to structure the vault encryption). The schematic, PCB layout,
+3D model, and this README are mine. the firmware, im not gonna act like i wrote it from scratch, it was more like using claude to frankenstien my code togetehr into a working firmware, since i haventbuilt ts irl yet, if any of yall try PLEASE lmk if theres any code problems, thx:
 
-## Stuff I know isn't perfect
+## license
 
-* A 4-digit PIN is only 10,000 combinations. The PBKDF2 rounds slow an attacker
-  down a lot, but if somebody steals the SD card and is patient, that's not
-  amazing. Making the PIN longer is on my list.
-* There's no limit on how many times you can guess the PIN on the device itself.
-* You have to use a computer to add a password, which is a little ironic for a
-  device whose whole job is not needing the computer. I want to add on-device
-  entry using the buttons.
-* No way to change your PIN yet without wiping everything.
-
-## Ideas for later
-
-* Longer / alphanumeric PIN
-* Adding entries on the device instead of over serial
-* Change PIN (re-encrypt the vault in place)
-* Wrong-PIN lockout with a delay that gets longer
-## License
-
-MIT. Do whatever you want with it.
+MIT. do whatever.
