@@ -5,7 +5,7 @@ description: "A physical password manager. ESP32-S3, OLED, six buttons, SD card.
 created_at: "2026-06-24"
 ---
 
-Quick note before anything: this is a design log, not a build log. I did the schematic, the PCB, the case, and the firmware, but I have not ordered the board. PCBs cost money and I'm paying for my own hobbies. So none of this has been flashed or tested on real hardware, it's all verified in KiCad.
+Quick note before anything: this is a design log, not a build log. I did the schematic, the PCB, the case, and the firmware, but I have not ordered the board. PCBs cost money and I'm paying for my own hobbies. So none of this has been flashed or tested on real hardware, it's all verified in KiCad, but it might not work if you do try to build it. HOLY IM SO DONE WITH MY LAPTOP, IT TURNED OFF WHILE I WAS ADDING MY LAPSE LINKS AND I LOST MY PROGROESS. IT DIDNT EVEN RUN OUTTA POWER.
 
 # Day 1 - Starting the schematic - June 24th - 5 Hours
 
