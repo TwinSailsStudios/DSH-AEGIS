@@ -2,10 +2,6 @@
 
 **Total time: 34 hours over 6 days (June 24 – June 30)**
 
-This is basically me writing down what I did each day so future me remembers why
-anything is the way it is. Spoiler: some of it is because of a bug I caused
-myself.
-
 ---
 
 ## Day 1 — June 24 · 5 hours
