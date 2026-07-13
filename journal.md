@@ -1,238 +1,156 @@
 ---
 title: "DSH-AEGIS"
 author: "Pratik Dash (TwinSailsStudios)"
-description: "A physical password manager — ESP32-S3, OLED, six buttons, SD card. Plugs in over USB-C and types your passwords for you."
+description: "A physical password manager. ESP32-S3, OLED, six buttons, SD card. Plugs in over USB-C and types your passwords for you."
 created_at: "2026-06-24"
 ---
 
-> Heads up: this is a **design log**, not a build log. Over these 6 days I did the
-> schematic, the PCB, the case model, and the firmware. I haven't ordered the
-> board yet — PCBs cost money and I'm funding this myself. So nothing here has
-> been flashed or tested on real hardware. It's all verified in KiCad, not on a
-> bench.
-(holy im so fucking done, so i was adding the lapse links, and my laptop just SHUT OFF, it didnt run out of power,i didnt close it, IT JS TURNED OFF, and i lost all my progress, NTS: READD LAPSE LINKS)
----
+Quick note before anything: this is a design log, not a build log. I did the schematic, the PCB, the case, and the firmware, but I have not ordered the board. PCBs cost money and I'm paying for my own hobbies. So none of this has been flashed or tested on real hardware, it's all verified in KiCad.
 
-# June 24th: Starting the schematic, meeting a chip with too many pins
+# Day 1 - Starting the schematic - June 24th - 5 Hours
 
-Day one. The idea: a handheld thing with a screen and six buttons that plugs into
-your computer and types your passwords for you, so I can stop using the same
-password on nine different websites.
+I've decided to build a physical password manager. Little handheld thing, screen, six buttons, SD card in the back, plugs into your computer over USB-C and types your passwords for you. I got tired of using the same password on like nine different sites which is objectively terrible.
 
-Picked the **ESP32-S3** specifically because it has native USB. That's the whole
-trick — the board doesn't *pretend* to be a keyboard, your computer genuinely
-thinks a keyboard got plugged in. No drivers, no companion app, works on any
-machine you walk up to. If I used a normal ESP32 I'd need a separate USB chip and
-the whole thing gets uglier and more expensive.
+I've done PCB stuff before but nothing with a chip this big, so this is a step up for me.
 
-Opened **KiCad**, dropped the S3 symbol in, and immediately felt out of my depth.
-This chip has an absurd number of pins. Spent the first chunk of the day just
-reading through the symbol working out which ones I'm actually allowed to touch.
+First thing I had to decide was the MCU, and I went with the ESP32-S3. The big reason is native USB. That means the board doesn't pretend to be a keyboard, your computer genuinely thinks a keyboard got plugged in. No drivers, no app, works on any machine you walk up to. If I used a normal ESP32 I'd need a whole separate USB chip and it gets uglier and more expensive.
 
-![the ESP32-S3 symbol](assets/Screenshot_from_2026-06-23_01-42-36.png)
+Opened KiCad, dropped the S3 symbol in, and immediately felt out of my depth. This chip has an absurd number of pins. Spent most of today just reading the symbol figuring out which ones I'm even allowed to touch.
 
-Then wired the six buttons: RECORD, SAVE, PLAY, SCROLL LEFT, SELECT, SCROLL
-RIGHT. Each one is a GPIO on one leg, ground on the other. No pull-up resistors,
-because the ESP32 has them built in and I can switch them on in software. Six
-fewer parts to buy.
+![](assets/Screenshot_from_2026-06-23_01-42-36.png)
 
-![the six buttons wired up](assets/Screenshot_from_2026-06-23_01-47-30.png)
+Then I did the six buttons. RECORD, SAVE, PLAY, SCROLL LEFT, SELECT, SCROLL RIGHT. Each one is just a GPIO on one leg and ground on the other, that's it. No pull-up resistors needed because the ESP32 has them built in and I turn them on in software. Six fewer parts to buy.
 
-Wires got messy but KiCad only cares that the connections are right.
+![](assets/Screenshot_from_2026-06-23_01-47-30.png)
 
-**Software used:** KiCad 8 (schematic editor)
-**Lapse:** [LAPSE LINK]
+The wires got messy but KiCad only cares that the connections are right, not that it looks nice.
+
+Lapse: [LAPSE LINK]
 
 **Total time spent: 5h**
 
----
+# Day 2 - Rest of the schematic + footprints - June 25th - 6 Hours
 
-# June 25th: Finishing the schematic, then 7,447 footprints
+Added everything else today:
 
-Added everything else: the OLED (I2C, so just SCL and SDA), the SD card socket
-(SPI, four wires), the USB-C receptacle, an AMS1117-3.3 to drop 5V to 3.3V, and
-two 5.1K resistors on the CC pins.
+* the OLED, which is I2C so only two wires, SCL and SDA
+* the SD card socket, SPI, four wires
+* USB-C receptacle
+* AMS1117-3.3 to drop 5V down to 3.3V
+* two 5.1K resistors on the CC pins
 
-Those resistors matter. Without them the USB-C port has no way to signal "I'm a
-device, give me power," and the board just doesn't turn on. I only knew that
-because I read a pile of forum threads from people asking why their USB-C board
-was dead, and the answer was always the CC resistors.
+Those resistors are important and I almost didn't put them in. Without them the USB-C port has no way to tell your laptop "hey I'm a device, give me power" and the board just doesn't turn on. I only knew about this because I read like four forum threads of people asking why their USB-C board was dead and the answer was always the CC resistors.
 
-![the finished schematic](assets/Screenshot_from_2026-07-13_14-05-19.png)
+![](assets/Screenshot_from_2026-07-13_14-05-19.png)
 
-Then footprints, which is the part nobody warns you about. A schematic symbol is
-basically a cartoon — it has no idea how big the real component is. So you go
-through every part and tell KiCad which exact physical shape it corresponds to.
+Then footprints, which nobody warns you about. A schematic symbol is basically a cartoon, it doesn't know how big the real part actually is. So you have to go through every single component and tell KiCad which exact physical shape it is in real life.
 
-15 components, one at a time, from a list of **7,447**.
+15 components, one at a time, out of a list of 7,447 footprints.
 
-![the footprint assignment dialog](assets/Screenshot_from_2026-06-24_03-50-50.png)
+![](assets/Screenshot_from_2026-06-24_03-50-50.png)
 
-I have now seen every connector ever manufactured by mankind.
+I have now seen every connector ever manufactured.
 
-**Software used:** KiCad (schematic editor, footprint assignment)
-**Lapse:** [LAPSE LINK]
+Lapse: [LAPSE LINK]
 
 **Total time spent: 6h**
 
----
+# Day 3 - PCB layout, the long day - June 26th - 8 Hours
 
-# June 26th: PCB layout. The long one.
+Biggest day by a mile. Today the schematic became an actual board.
 
-Biggest day. Turned the schematic into an actual board.
+When you first push everything into the PCB editor it just dumps all the parts in a pile with a horrifying spiderweb of white lines showing what needs to connect to what. It looks impossible. It's not, it just takes eight hours.
 
-When you first import everything into the PCB editor it dumps all the parts in a
-pile with a spiderweb of thin white lines showing what needs to connect to what.
-It looks impossible. It isn't, it just takes hours.
+The layout I went with is six buttons in a 2x3 grid at the bottom like a keypad, OLED sitting right above them, ESP32 up top, USB-C on the left edge so the cable comes out the side instead of jabbing into your hand.
 
-Layout: six buttons in a 2x3 grid at the bottom like a keypad, OLED right above
-them, ESP32 at the top, USB-C on the left edge so the cable comes out the side
-instead of jabbing into your palm.
+![](assets/Screenshot_from_2026-06-24_02-57-05.png)
 
-![routing near the regulator](assets/Screenshot_from_2026-06-24_02-57-05.png)
+Learned the annoying way that the ESP32 module has an antenna on it and you can't run copper underneath an antenna or the wifi gets worse. So there's this big hatched keep-out zone across the top of my board that I'm not allowed to route through. Had to redo a few traces once I realized.
 
-Learned the annoying way that the ESP32 module has an **antenna** on it, and you
-can't run copper underneath an antenna or the wifi degrades. So there's a big
-hatched keep-out zone across the top of the board I'm not allowed to route
-through. Had to redo a few traces after I figured that out.
+![](assets/Screenshot_from_2026-06-26_00-54-56.png)
 
-![routed board, 0 unrouted](assets/Screenshot_from_2026-06-26_00-54-56.png)
+Ended at 217 track segments, 21 vias, 43 nets, 0 unrouted. That last number is the one that actually matters and I looked at it for a while.
 
-Final: **217 track segments, 21 vias, 43 nets, 0 unrouted.** That last number is
-the one that matters.
+Did not move from this chair all day.
 
-Did not move from the chair for eight hours.
-
-**Software used:** KiCad (PCB editor)
-**Lapse:** [LAPSE LINK]
+Lapse: [LAPSE LINK]
 
 **Total time spent: 8h**
 
----
+# Day 4 - Silkscreen, and catching a pin conflict that would've cost me a board - June 27th - 4 Hours
 
-# June 27th: Silkscreen, and catching a pin conflict before it cost me a board
+Easy day mostly. Silkscreen is the white printing on a PCB and it costs literally nothing extra, the fab prints it either way, so obviously I put a heart on the back, my name, the project name, and some Kanye lyrics down the side.
 
-Lighter day. Started with silkscreen — the white printing on a PCB. It costs
-nothing extra, the fab prints it either way, so I put a heart on the back, my
-name, the project name, and some Kanye lyrics down the side.
+![](assets/Screenshot_from_2026-06-25_00-19-52.png)
 
-![silkscreen on the back](assets/Screenshot_from_2026-06-25_00-19-52.png)
+Then while I was double checking my pin assignments against the datasheet before calling the board done, I found something that would've ruined the entire PCB order.
 
-Then, while double-checking pin assignments against the datasheet before calling
-the board finished, I found something that would have wasted an entire PCB order.
+My SD card is on IO35, IO36, IO37 and IO38. On an ESP32-S3 module with octal (R8) PSRAM, IO35 through 37 are wired internally to the PSRAM chip. You physically cannot use them as GPIO. The KiCad symbol even brackets those three pins and literally labels them PSRAM, and I had been staring at that label for three days without it registering.
 
-My SD card is on **IO35, IO36, IO37, IO38**. On an ESP32-S3 module with **octal
-(R8) PSRAM**, IO35–37 are wired internally to the PSRAM die. They physically
-cannot be used as GPIO. The KiCad symbol literally brackets those three pins and
-labels them "PSRAM" — I'd been staring at that label for three days without
-registering what it meant.
+So this board only works with a module that has no PSRAM or quad PSRAM. And in the firmware, PSRAM has to be set to Disabled, because if the ESP32 thinks it has OPI PSRAM it grabs those pins at boot before my code even runs, and the SD card would just silently never mount.
 
-So this board only works with a module that has **no PSRAM, or quad PSRAM**. And
-in the firmware, PSRAM has to be set to **Disabled**, because if the ESP32 thinks
-it has OPI PSRAM it claims those pins at boot, before any of my code runs, and
-the SD card would just silently never mount.
+I would have had zero clue why. I'd have gotten the board back, soldered the whole thing, and spent a weekend blaming my solder joints. Very glad I caught this on a screen and not on a desk. Put a big comment about it at the top of the firmware.
 
-I would have had zero idea why. I'd have gotten the board back, soldered it, and
-spent a weekend blaming my solder joints. Very glad I caught this on a screen and
-not on a desk. Wrote a big comment about it at the top of the firmware so future
-me doesn't undo it.
+Then opened the 3D viewer to see what it'd look like when it's real, and honestly it looks like a product.
 
-Then opened the 3D viewer to see what it'll actually look like:
+![](assets/Screenshot_from_2026-06-25_03-43-38.png)
 
-![3D render of the board](assets/Screenshot_from_2026-06-25_03-43-38.png)
-
-**Software used:** KiCad (PCB editor, 3D viewer)
-**Lapse:** [LAPSE LINK]
+Lapse: [LAPSE LINK]
 
 **Total time spent: 4h**
 
----
+# Day 5 - Case in Tinkercad - June 28th - 5 Hours
 
-# June 28th: A case, in Tinkercad
+A bare PCB in your pocket is a short circuit waiting to happen so it needs a case.
 
-A bare PCB in your pocket is a short circuit waiting to happen, so it needs a
-case.
+I used Tinkercad. I know. But I need a box with holes in it and Tinkercad makes a box with holes in it in fifteen minutes, and Fusion 360 makes me want to lie down. I'll learn Fusion eventually.
 
-I used **Tinkercad**. I know. But I need a box with holes in it, and Tinkercad
-makes a box with holes in it in fifteen minutes, whereas Fusion 360 makes me want
-to lie down. I'll learn Fusion eventually.
+![](assets/Screenshot_from_2026-06-26_02-14-46.png)
 
-![case ver 1](assets/Screenshot_from_2026-06-26_02-14-46.png)
+Version 1 is a bottom tray the PCB drops into, a lid with a window cut out for the OLED, six button caps, a front piece with the heart on it, and cutouts for the USB-C port on the side and the SD card slot.
 
-Ver 1: bottom tray the PCB drops into, lid with a window cut out for the OLED,
-six button caps, a front piece with the heart on it, and cutouts for USB-C on the
-side and the SD slot.
+Then I laid everything out flat to check it'd actually print, and mostly to check the button caps weren't so tiny they'd fly off the print bed and disappear into the carpet forever.
 
-Laid it out flat to check it'd actually print, and mostly to check the button
-caps weren't so small they'd fly off the bed and vanish into the carpet forever.
+![](assets/Screenshot_from_2026-06-26_03-57-41.png)
 
-![laid out for printing](assets/Screenshot_from_2026-06-26_03-57-41.png)
+Not printing it yet though. Every dimension in here is a guess off the KiCad model and I'd rather measure the real board with calipers than waste filament. So it stays a model.
 
-Not printing it yet. Every dimension is a guess off the KiCad model, and I'd
-rather measure the real board with calipers than waste filament. So it stays a
-model for now.
-
-**Software used:** Tinkercad
-**Lapse:** [LAPSE LINK]
+Lapse: [LAPSE LINK]
 
 **Total time spent: 5h**
 
----
+# Day 6 - Firmware - June 30th - 6 Hours
 
-# June 30th: The firmware
+Took a day off and then wrote the code. Used VS Code and the Arduino IDE, with the U8g2 library for the screen and mbedTLS for the crypto (both already come with the ESP32 core).
 
-Took a day off, then wrote the code.
+The flow is PIN screen, then unlock, then scroll through your saved logins, then hit PLAY and it types the password wherever your cursor is.
 
-Structure: PIN screen → unlock → scroll through your saved logins → hit PLAY → it
-types the password wherever your cursor is.
+For the encryption I stuck to boring standard stuff on purpose. PBKDF2 stretches the 4 digit PIN into a real key, 60,000 rounds so guessing is slow. AES-256 for the vault itself. And an HMAC over the ciphertext, which means if you type the wrong PIN it fails a check and the device never even tries to decrypt anything. None of that is my invention. Making up your own crypto is how you end up as somebody's cautionary example.
 
-For the crypto I stuck to boring, standard, well-tested stuff on purpose.
-**PBKDF2** stretches the 4-digit PIN into a real key (60,000 rounds, so guessing
-is slow). **AES-256** encrypts the vault. An **HMAC** over the ciphertext means a
-wrong PIN fails a check and the device never even attempts to decrypt anything.
-None of that is my invention. Rolling your own crypto is how you end up as
-somebody else's cautionary example.
+![](assets/Screenshot_from_2026-07-13_14-57-41.png)
 
-![the PIN unlock logic](assets/Screenshot_from_2026-07-13_14-57-41.png)
+The UI is the part I spent the most time on. Everything that moves, the carousel sliding between entries, the pill in the menus, the shake when you get the PIN wrong, is all one tiny function. It's just a number easing toward a target a little bit each frame. That's the entire animation system. Costs basically nothing and it makes a 128x32 monochrome screen feel like it actually has a UI instead of a menu.
 
-The UI is what I spent the most time on. Everything that moves — the carousel
-sliding between entries, the selection pill in the menus, the shake when you type
-the wrong PIN — is one function: a number easing toward a target a fraction each
-frame. That's the entire animation system. Costs almost nothing and it makes a
-128x32 monochrome screen feel like it has a UI instead of a menu.
+![](assets/Screenshot_from_2026-07-13_14-58-03.png)
 
-![list and actions handling](assets/Screenshot_from_2026-07-13_14-58-03.png)
+The weak point is adding entries. Six buttons can't type a password, so RECORD hands off to the serial monitor and you send label, username, password separated by tabs. A password manager that needs a computer to set it up is a little embarrassing and it's the first thing I want to fix.
 
-The weak spot is adding entries. Six buttons can't type a password, so RECORD
-hands off to the serial monitor and you send `label / user / pass` separated by
-tabs. A password manager that needs a computer to set up is a bit embarrassing
-and it's the first thing I want to fix.
+None of this has run on real hardware. It compiles and I've read through it a bunch of times but until I can afford the PCB it's all theoretical. I fully expect to find stuff wrong the second it actually boots.
 
-**None of this has run on real hardware.** It compiles, and I've read it through
-enough times to be reasonably confident in it, but until I can afford the PCB
-it's theoretical. I fully expect to find things wrong the second it boots.
-
-**Software used:** VS Code, Arduino IDE (ESP32 core), U8g2 library, mbedTLS
-**Lapse:** [LAPSE LINK]
+Lapse: [LAPSE LINK]
 
 **Total time spent: 6h**
 
----
-
 # Where it's at
 
-Schematic done. Board routed, 0 unrouted nets. Case modelled. Firmware written.
+Schematic done, board routed with 0 unrouted nets, case modelled, firmware written. Not built, because I'm funding this myself and the board plus components is real money I don't have right now. When I do have it, this becomes a build log.
 
-Not built. That's the honest status — I'm paying for this myself and the board
-plus components is real money I don't have right now. When I do, this turns into
-a build log.
+Still want to do:
 
-Still on the list:
-
-* Add entries **on the device** instead of over serial
+* add entries on the device instead of over serial
 * PIN longer than 4 digits
-* Change your PIN without wiping the vault
-* Lockout after repeated wrong guesses
-* Actually order the thing
+* change your PIN without wiping the whole vault
+* lockout after too many wrong guesses
+* actually order the thing
 
 **Grand total: 34h**
