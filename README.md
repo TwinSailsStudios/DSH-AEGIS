@@ -1,8 +1,16 @@
 # DSH-AEGIS
-## > update,so i updated the firmware to make it much more professional, but i havent updated the readme yet.
-<img width="1920" height="1035" alt="HOVA" src="https://github.com/user-attachments/assets/75a87415-c3d9-4c18-bcd2-3031036c1f7f" />
-https://github.com/user-attachments/assets/2e60c4a9-2eaf-4800-a794-9d0f289f58ca
 
+<img width="1920" height="1035" alt="image" src="https://github.com/user-attachments/assets/0c222965-ca33-4f1f-ae1f-f44e92583c07" />
+Image of PCB routing and tracing
+<img width="1920" height="1035" alt="image" src="https://github.com/user-attachments/assets/ca1886aa-26a2-4ace-9ada-32efbefc04d2" />
+image of schematic
+<img width="1920" height="1035" alt="image" src="https://github.com/user-attachments/assets/05983d60-4e7e-4624-929b-f956e889c0f6" />
+Image of case + accessories (SD card case, micro sd card case, case cowl, stand, and sd/micro sd card storage)
+<img width="1920" height="1035" alt="image" src="https://github.com/user-attachments/assets/17fc9b09-f054-4ae0-acb3-b33efa1c284f" />
+Image of 3d model
+
+https://github.com/user-attachments/assets/2e60c4a9-2eaf-4800-a794-9d0f289f58ca
+Video of 3d model
 ### UPDATE NOTICE:
 alr so i added step/stp files in the hardware folder in a zip file since they were too big for regular uploads (terminal limit is 100mb), i also made the pcb more compact, but the i didnt update the cover image, so you'll have to download the pcb file.
 
