@@ -1,0 +1,12 @@
+Item / Component Name,Description / Purpose,Qty,Price (USD),Total Cost (USD),Buying Link
+1x ESP32-S3-WROOM-1 (N16R8),Main MCU module - WiFi/BLE USB HID drives OLED + SD vault,1,3.40,3.40,https://www.lcsc.com/product-detail/C2913202.html
+"1x 0.96"" I2C OLED (SSD1306 4-pin)",128x64 status/UI display I2C addr 0x3C,1,17.50,17.50,https://www.adafruit.com/product/326
+1x AMS1117-3.3 (SOT-223),3.3V LDO regulator steps 5V USB rail to 3.3V,1,0.10,0.10,https://www.lcsc.com/product-detail/C6186.html
+2x 10uF ceramic capacitor,LDO input/output bulk decoupling,2,0.03,0.06,https://www.lcsc.com/search?q=10uF%200603%2025V%20X7R
+1x 1uF ceramic capacitor,EN-pin RC power-on delay,1,0.02,0.02,https://www.lcsc.com/search?q=1uF%200603%2050V%20X7R
+1x USB-C Receptacle (16-pin),USB 2.0 power + data TYPE-C-31-M-12,1,0.30,0.30,https://www.lcsc.com/product-detail/C165948.html
+1x 1x6 Pin Header Socket (2.54mm),MicroSD SPI breakout connector,1,0.15,0.15,https://www.lcsc.com/search?q=female%20header%201x6%202.54mm
+6x Cherry MX Keyswitch,Tactile push buttons MX1A-11NN,6,1.25,7.50,https://www.digikey.com/en/products/detail/cherry-americas-llc/MX1A-11NN/91136
+2x 5.1k resistor,USB-C CC1/CC2 pulldowns UFP sink detection,2,0.01,0.02,https://www.lcsc.com/search?q=5.1k%200603%20resistor
+1x 10k resistor,EN-pin pull-up,1,0.01,0.01,https://www.lcsc.com/search?q=10k%200603%20resistor
+,,,GRAND TOTAL,29.06,
