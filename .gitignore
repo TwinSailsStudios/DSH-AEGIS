@@ -2,3 +2,9 @@
 *-backups/
 fp-info-cache
 *.kicad_prl
+
+# KiCad lock & restore artifacts
+*.lck
+~*.lck
+_restore_backup_*/
+*-restore-backup/

@@ -17,11 +17,11 @@ First thing I had to decide was the MCU, and I went with the ESP32-S3. The big r
 
 Opened KiCad, dropped the S3 symbol in, and immediately felt out of my depth. This chip has an absurd number of pins. Spent most of today just reading the symbol figuring out which ones I'm even allowed to touch.
 
-![](assets/Screenshot_from_2026-06-23_01-42-36.png)
+![](../assets/Screenshot_from_2026-06-23_01-42-36.png)
 
 Then I did the six buttons. RECORD, SAVE, PLAY, SCROLL LEFT, SELECT, SCROLL RIGHT. Each one is just a GPIO on one leg and ground on the other, that's it. No pull-up resistors needed because the ESP32 has them built in and I turn them on in software. Six fewer parts to buy.
 
-![](assets/Screenshot_from_2026-06-23_01-47-30.png)
+![](../assets/Screenshot_from_2026-06-23_01-47-30.png)
 
 The wires got messy but KiCad only cares that the connections are right, not that it looks nice.
 
@@ -41,13 +41,13 @@ Added everything else today:
 
 Those resistors are important and I almost didn't put them in. Without them the USB-C port has no way to tell your laptop "hey I'm a device, give me power" and the board just doesn't turn on. I only knew about this because I read like four forum threads of people asking why their USB-C board was dead and the answer was always the CC resistors.
 
-![](assets/Screenshot_from_2026-07-13_14-05-19.png)
+![](../assets/Screenshot_from_2026-07-13_14-05-19.png)
 
 Then footprints, which nobody warns you about. A schematic symbol is basically a cartoon, it doesn't know how big the real part actually is. So you have to go through every single component and tell KiCad which exact physical shape it is in real life.
 
 15 components, one at a time, out of a list of 7,447 footprints.
 
-![](assets/Screenshot_from_2026-06-24_03-50-50.png)
+![](../assets/Screenshot_from_2026-06-24_03-50-50.png)
 
 I have now seen every connector ever manufactured.
 
@@ -63,11 +63,11 @@ When you first push everything into the PCB editor it just dumps all the parts i
 
 The layout I went with is six buttons in a 2x3 grid at the bottom like a keypad, OLED sitting right above them, ESP32 up top, USB-C on the left edge so the cable comes out the side instead of jabbing into your hand.
 
-![](assets/Screenshot_from_2026-06-24_02-57-05.png)
+![](../assets/Screenshot_from_2026-06-24_02-57-05.png)
 
 Learned the annoying way that the ESP32 module has an antenna on it and you can't run copper underneath an antenna or the wifi gets worse. So there's this big hatched keep-out zone across the top of my board that I'm not allowed to route through. Had to redo a few traces once I realized.
 
-![](assets/Screenshot_from_2026-06-26_00-54-56.png)
+![](../assets/Screenshot_from_2026-06-26_00-54-56.png)
 
 Ended at 217 track segments, 21 vias, 43 nets, 0 unrouted. That last number is the one that actually matters and I looked at it for a while.
 
@@ -81,7 +81,7 @@ Lapse: [waaaaaaaaaaaaaaaaah]
 
 Easy day mostly. Silkscreen is the white printing on a PCB and it costs literally nothing extra, the fab prints it either way, so obviously I put a heart on the back, my name, the project name, and some Kanye lyrics down the side.
 
-![](assets/Screenshot_from_2026-06-25_00-19-52.png)
+![](../assets/Screenshot_from_2026-06-25_00-19-52.png)
 
 Then while I was double checking my pin assignments against the datasheet before calling the board done, I found something that would've ruined the entire PCB order.
 
@@ -93,7 +93,7 @@ I would have had zero clue why. I'd have gotten the board back, soldered the who
 
 Then opened the 3D viewer to see what it'd look like when it's real, and honestly it looks like a product.
 
-![](assets/Screenshot_from_2026-06-25_03-43-38.png)
+![](../assets/Screenshot_from_2026-06-25_03-43-38.png)
 
 Lapse: [TIMWANMNIHAC]
 
@@ -105,13 +105,13 @@ A bare PCB in your pocket is a short circuit waiting to happen so it needs a cas
 
 I used Tinkercad. I know. But I need a box with holes in it and Tinkercad makes a box with holes in it in fifteen minutes, and Fusion 360 makes me want to lie down. I'll learn Fusion eventually.
 
-![](assets/Screenshot_from_2026-06-26_02-14-46.png)
+![](../assets/Screenshot_from_2026-06-26_02-14-46.png)
 
 Version 1 is a bottom tray the PCB drops into, a lid with a window cut out for the OLED, six button caps, a front piece with the heart on it, and cutouts for the USB-C port on the side and the SD card slot.
 
 Then I laid everything out flat to check it'd actually print, and mostly to check the button caps weren't so tiny they'd fly off the print bed and disappear into the carpet forever.
 
-![](assets/Screenshot_from_2026-06-26_03-57-41.png)
+![](../assets/Screenshot_from_2026-06-26_03-57-41.png)
 
 Not printing it yet though. Every dimension in here is a guess off the KiCad model and I'd rather measure the real board with calipers than waste filament. So it stays a model.
 
@@ -127,11 +127,11 @@ The flow is PIN screen, then unlock, then scroll through your saved logins, then
 
 For the encryption I stuck to boring standard stuff on purpose. PBKDF2 stretches the 4 digit PIN into a real key, 60,000 rounds so guessing is slow. AES-256 for the vault itself. And an HMAC over the ciphertext, which means if you type the wrong PIN it fails a check and the device never even tries to decrypt anything. None of that is my invention. Making up your own crypto is how you end up as somebody's cautionary example.
 
-![](assets/Screenshot_from_2026-07-13_14-57-41.png)
+![](../assets/Screenshot_from_2026-07-13_14-57-41.png)
 
 The UI is the part I spent the most time on. Everything that moves, the carousel sliding between entries, the pill in the menus, the shake when you get the PIN wrong, is all one tiny function. It's just a number easing toward a target a little bit each frame. That's the entire animation system. Costs basically nothing and it makes a 128x32 monochrome screen feel like it actually has a UI instead of a menu.
 
-![](assets/Screenshot_from_2026-07-13_14-58-03.png)
+![](../assets/Screenshot_from_2026-07-13_14-58-03.png)
 
 The weak point is adding entries. Six buttons can't type a password, so RECORD hands off to the serial monitor and you send label, username, password separated by tabs. A password manager that needs a computer to set it up is a little embarrassing and it's the first thing I want to fix.
 
