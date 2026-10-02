@@ -119,8 +119,10 @@ KiCad project is in `hardware/`.
 ## AI use
 I used gemini to help with some kicad features and trying to debug a probelm with exporting my 3d model of my pcb
 I used Claude to help write the firmware and to talk through design decisions
-(pin conflicts, how to structure the vault encryption). The schematic, PCB layout,
-3D model, and this README are mine. the firmware, im not gonna act like i wrote it from scratch, it was more like using claude to frankenstien my code togetehr into a working firmware, since i haventbuilt ts irl yet, if any of yall try PLEASE lmk if theres any code problems, thx:
+(pin conflicts, how to structure the vault encryption). The schematic, PCB layout, 
+3D model, and this README are mine. the firmware, im not gonna act like i wrote it from scratch, it was more like using claude to frankenstien my code togetehr into a working firmware, since i haventbuilt ts irl yet, if any of yall try PLEASE lmk if theres any code problems, thx:)
+
+EDIT: I also gave claude access to organize all the files
 
 ## license
 
